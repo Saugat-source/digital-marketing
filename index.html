@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Marketing & Social Media</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b12;
+    --text: #f5f5f7;
+    --dim: rgba(245,245,247,0.22);
+    --accent: #ff5a36;
+    --glow: #ff5a36;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, .big { font-family: "Space Grotesk", "Inter", sans-serif; }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 28px;
+    font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+    mix-blend-mode: difference;
+  }
+  .logo { font-weight: 800; letter-spacing: 1px; font-size: 18px; text-transform: none; }
+  .progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0; z-index: 60; }
+  .counter {
+    position: fixed; right: 24px; bottom: 20px; z-index: 50;
+    font-size: 13px; letter-spacing: 2px; opacity: .7;
+  }
+  .hint {
+    position: fixed; left: 24px; bottom: 20px; z-index: 50;
+    font-size: 12px; letter-spacing: 1px; opacity: .5;
+  }
+
+  .slide { position: relative; min-height: 100vh; }
+
+  /* ---------- 1. Hero with parallax ---------- */
+  .hero {
+    height: 100vh; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 7vw;
+    background: radial-gradient(circle at 70% 30%, #2a1b5e 0%, transparent 55%),
+                radial-gradient(circle at 20% 80%, #5e1b2a 0%, transparent 50%), var(--bg);
+  }
+  .hero .eyebrow { color: var(--accent); letter-spacing: 4px; text-transform: uppercase; font-size: 14px; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(48px, 9vw, 140px); line-height: .95; font-weight: 700; }
+  .hero h1 span { display: block; }
+  .hero h1 .outline { color: transparent; -webkit-text-stroke: 2px var(--text); }
+  .hero .sub { margin-top: 30px; font-size: 18px; opacity: .7; max-width: 520px; }
+  .floater {
+    position: absolute; font-size: 54px; will-change: transform;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,.5));
+  }
+  .bubble {
+    position: absolute; border-radius: 50%; will-change: transform;
+    background: linear-gradient(135deg, var(--accent), #ff2d87); opacity: .18; filter: blur(2px);
+  }
+
+  /* ---------- Marquee ---------- */
+  .marquee {
+    overflow: hidden; white-space: nowrap; padding: 26px 0;
+    background: var(--accent); color: #0b0b12;
+    font-family: "Space Grotesk", sans-serif; font-weight: 700;
+    font-size: clamp(28px, 4vw, 56px); transform: rotate(-2deg) scale(1.05);
+  }
+  .marquee-track { display: inline-block; animation: marquee 18s linear infinite; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* ---------- Reveal animation ---------- */
+  .reveal { opacity: 0; transform: translateY(60px); transition: opacity .9s ease, transform .9s cubic-bezier(.2,.8,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- 2. Statement ---------- */
+  .statement {
+    display: flex; align-items: center; padding: 0 7vw;
+  }
+  .statement p {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: clamp(30px, 4.6vw, 72px); line-height: 1.15; font-weight: 500;
+  }
+  .statement p .w { color: var(--dim); transition: color .4s ease; }
+  .statement p .w.lit { color: var(--text); }
+  .statement p .w.hl.lit { color: var(--accent); }
+
+  /* ---------- 3. SWSH-style sticky words + changing card ---------- */
+  .sticky-wrap { height: 800vh; }
+  .sticky {
+    position: sticky; top: 0; height: 100vh; overflow: hidden;
+    display: grid; grid-template-columns: 1fr 1.1fr 1fr; align-items: center;
+    padding: 0 5vw;
+    background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--glow) 35%, transparent) 0%, transparent 60%), var(--bg);
+    transition: background .8s ease;
+  }
+  .sticky .left h2 { font-size: clamp(34px, 4vw, 64px); line-height: 1; }
+  .sticky .left p { margin-top: 18px; opacity: .65; max-width: 300px; font-size: 16px; }
+  .cards { position: relative; height: min(60vh, 460px); }
+  .card {
+    position: absolute; inset: 0; border-radius: 28px;
+    padding: 36px; display: flex; flex-direction: column; justify-content: flex-end;
+    opacity: 0; transform: scale(.85) rotate(-4deg);
+    transition: opacity .6s ease, transform .7s cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 30px 80px rgba(0,0,0,.5);
+    overflow: hidden;
+  }
+  .card.active { opacity: 1; transform: none; }
+  .card .icon { position: absolute; top: 28px; right: 32px; font-size: 90px; }
+  .card h3 { font-size: 42px; margin-bottom: 8px; }
+  .card .tag { font-size: 18px; opacity: .9; margin-bottom: 18px; }
+  .card .best { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; background: rgba(0,0,0,.25); padding: 8px 14px; border-radius: 999px; align-self: flex-start; }
+  .words { position: relative; height: 100vh; }
+  .words ul {
+    list-style: none; position: absolute; top: 50%; right: 0; text-align: right;
+    transition: transform .7s cubic-bezier(.2,.8,.2,1);
+  }
+  .words li {
+    font-family: "Space Grotesk", sans-serif; font-weight: 500;
+    font-size: clamp(36px, 5vw, 84px); line-height: 1.2; height: 1.2em;
+    color: var(--dim); transition: color .5s ease, transform .5s ease;
+    transform-origin: right center;
+  }
+  .words li.active { color: var(--text); transform: scale(1.08); }
+
+  /* ---------- 4. Pillars ---------- */
+  .pillars { padding: 12vh 7vw 8vh; }
+  .section-title { font-size: clamp(36px, 5vw, 80px); line-height: 1; margin-bottom: 50px; }
+  .section-title em { font-style: normal; color: var(--accent); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 20px; }
+  .pillar {
+    background: #15151f; border: 1px solid #262636; border-radius: 22px; padding: 30px 26px;
+    transition: transform .3s ease, border-color .3s ease;
+  }
+  .pillar:hover { transform: translateY(-8px); border-color: var(--accent); }
+  .pillar .num { color: var(--accent); font-family: "Space Grotesk"; font-size: 14px; letter-spacing: 2px; }
+  .pillar h3 { font-size: 26px; margin: 16px 0 10px; }
+  .pillar p { opacity: .65; line-height: 1.5; font-size: 15px; }
+  .pillar .emoji { font-size: 40px; }
+
+  /* ---------- 5. Steps ---------- */
+  .steps { padding: 12vh 7vw 8vh; }
+  .step {
+    display: grid; grid-template-columns: 120px 1fr; align-items: baseline;
+    border-top: 1px solid #262636; padding: 28px 0;
+  }
+  .step .n { font-family: "Space Grotesk"; font-size: 64px; color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
+  .step h3 { font-size: clamp(26px, 3vw, 44px); }
+  .step p { opacity: .6; margin-top: 6px; font-size: 17px; }
+
+  /* ---------- 6. Thank you ---------- */
+  .end {
+    height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+    background: radial-gradient(circle at 50% 60%, #ff5a3633 0%, transparent 60%), var(--bg);
+  }
+  .end h2 { font-size: clamp(60px, 12vw, 200px); line-height: .9; }
+  .end p { margin-top: 24px; opacity: .7; font-size: 20px; }
+  .btn {
+    display: inline-block; margin-top: 36px; background: var(--accent); color: #0b0b12;
+    padding: 16px 34px; border-radius: 999px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; font-size: 14px;
+  }
+
+  /* ---------- Phone layout ---------- */
+  @media (max-width: 800px) {
+    .sticky { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; padding: 80px 16px 30px; gap: 16px; }
+    .sticky .left p { display: none; }
+    .cards { height: 38vh; }
+    .words { height: 22vh; overflow: hidden; }
+    .words ul { right: auto; left: 0; text-align: left; }
+    .words li { font-size: 34px; transform-origin: left center; }
+    .step { grid-template-columns: 70px 1fr; }
+    .step .n { font-size: 40px; }
+    .hint { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="topbar">
+  <div class="logo">◆ DigiTalk</div>
+  <div>Digital Marketing · 2026</div>
+</div>
+<div class="hint">Press ↓ / Space for next · ↑ for back</div>
+<div class="counter" id="counter">01 / 01</div>
+
+<!-- 1. HERO -->
+<section class="slide hero" id="hero">
+  <div class="bubble" data-speed="0.3" style="width:420px;height:420px;top:-80px;right:-60px"></div>
+  <div class="bubble" data-speed="0.6" style="width:220px;height:220px;bottom:10%;left:45%"></div>
+  <div class="floater" data-speed="0.8" style="top:18%;right:22%">❤️</div>
+  <div class="floater" data-speed="0.5" style="top:55%;right:10%">👍</div>
+  <div class="floater" data-speed="1.1" style="top:70%;right:35%">🔔</div>
+  <div class="floater" data-speed="0.35" style="top:30%;right:5%">💬</div>
+  <div class="floater" data-speed="0.9" style="top:12%;right:45%">#️⃣</div>
+
+  <div class="eyebrow">Presentation</div>
+  <h1>
+    <span>Digital</span>
+    <span class="outline">Marketing</span>
+    <span>&amp; Social Media</span>
+  </h1>
+  <p class="sub">How brands find, reach and grow their audience online.<br>Presented by <strong>Your Name</strong></p>
+</section>
+
+<div class="marquee"><div class="marquee-track">
+  LIKE ✦ SHARE ✦ COMMENT ✦ SUBSCRIBE ✦ FOLLOW ✦ ENGAGE ✦ LIKE ✦ SHARE ✦ COMMENT ✦ SUBSCRIBE ✦ FOLLOW ✦ ENGAGE ✦&nbsp;
+</div></div>
+
+<!-- 2. STATEMENT (words light up) -->
+<section class="slide statement" id="statement">
+  <p id="statementText">Digital marketing means promoting a product or brand <span class="hl">online</span> — using websites, search engines, email and <span class="hl">social media</span> — to reach the <span class="hl">right people</span> at the <span class="hl">right time.</span></p>
+</section>
+
+<!-- 3. SWSH-STYLE PLATFORMS -->
+<section class="slide sticky-wrap" id="platforms">
+  <div class="sticky">
+    <div class="left">
+      <h2>Where your<br>audience lives</h2>
+      <p>Every platform has its own people, its own style, and its own job in your marketing plan.</p>
+    </div>
+    <div class="cards" id="cards"></div>
+    <div class="words"><ul id="words"></ul></div>
+  </div>
+</section>
+
+<!-- 4. PILLARS -->
+<section class="slide pillars" id="pillars">
+  <h2 class="section-title reveal">The 5 pillars of<br><em>digital marketing</em></h2>
+  <div class="grid">
+    <div class="pillar reveal"><div class="emoji">🔍</div><div class="num">01</div><h3>SEO</h3><p>Show up on Google when people search for what you sell.</p></div>
+    <div class="pillar reveal"><div class="emoji">✍️</div><div class="num">02</div><h3>Content</h3><p>Blogs, videos and posts that teach, entertain and build trust.</p></div>
+    <div class="pillar reveal"><div class="emoji">📱</div><div class="num">03</div><h3>Social Media</h3><p>Build a community and talk with customers every day.</p></div>
+    <div class="pillar reveal"><div class="emoji">📧</div><div class="num">04</div><h3>Email</h3><p>Stay in touch with people who already like your brand.</p></div>
+    <div class="pillar reveal"><div class="emoji">🎯</div><div class="num">05</div><h3>Paid Ads</h3><p>Pay to reach exactly the age, place and interests you want.</p></div>
+  </div>
+</section>
+
+<!-- 5. STEPS -->
+<section class="slide steps" id="steps">
+  <h2 class="section-title reveal">A simple <em>social media</em><br>strategy</h2>
+  <div class="step reveal"><div class="n">1</div><div><h3>Know your audience</h3><p>Who are they? What do they like? Which apps do they use?</p></div></div>
+  <div class="step reveal"><div class="n">2</div><div><h3>Set a clear goal</h3><p>More followers, more website visits, or more sales?</p></div></div>
+  <div class="step reveal"><div class="n">3</div><div><h3>Pick the right platforms</h3><p>Be great on two platforms instead of average on six.</p></div></div>
+  <div class="step reveal"><div class="n">4</div><div><h3>Post useful, regular content</h3><p>Plan a content calendar and stay consistent.</p></div></div>
+  <div class="step reveal"><div class="n">5</div><div><h3>Measure and improve</h3><p>Check reach, engagement and clicks — then do more of what works.</p></div></div>
+</section>
+
+<!-- 6. END -->
+<section class="slide end" id="end">
+  <h2 class="reveal">Thank<br>you!</h2>
+  <p class="reveal">Any questions? 🙌</p>
+  <span class="btn reveal">Let's connect</span>
+</section>
+
+<script>
+  /* ---------- Platform data (SWSH-style section) ---------- */
+  const platforms = [
+    { name: "Facebook",  icon: "👥", tag: "Communities, groups and targeted ads", best: "Local business", c1: "#1877f2", c2: "#0a3d91" },
+    { name: "Instagram", icon: "📸", tag: "Visual storytelling with photos & Reels", best: "Fashion · Food · Travel", c1: "#f58529", c2: "#c13584" },
+    { name: "TikTok",    icon: "🎵", tag: "Short videos, trends and going viral", best: "Gen Z brands", c1: "#25f4ee", c2: "#fe2c55" },
+    { name: "YouTube",   icon: "▶️", tag: "Long videos, tutorials and search", best: "Education · Reviews", c1: "#ff0000", c2: "#7a0000" },
+    { name: "LinkedIn",  icon: "💼", tag: "Professional networking and B2B", best: "Jobs · Companies", c1: "#0a66c2", c2: "#03294f" },
+    { name: "X",         icon: "💬", tag: "Real-time news and conversations", best: "News · Customer replies", c1: "#444", c2: "#000" },
+    { name: "WhatsApp",  icon: "📱", tag: "Direct chat with customers", best: "Orders · Support", c1: "#25d366", c2: "#075e54" },
+  ];
+  const cardsEl = document.getElementById("cards");
+  const wordsEl = document.getElementById("words");
+  platforms.forEach(p => {
+    cardsEl.insertAdjacentHTML("beforeend",
+      `<div class="card" style="background:linear-gradient(140deg, ${p.c1}, ${p.c2})">
+         <div class="icon">${p.icon}</div>
+         <h3>${p.name}</h3><div class="tag">${p.tag}</div><div class="best">Best for: ${p.best}</div>
+       </div>`);
+    wordsEl.insertAdjacentHTML("beforeend", `<li>${p.name}</li>`);
+  });
+  const cards = [...cardsEl.children];
+  const words = [...wordsEl.children];
+  const stickyWrap = document.getElementById("platforms");
+  stickyWrap.style.height = (platforms.length + 1) * 100 + "vh";
+
+  let activePlatform = -1;
+  function setPlatform(i) {
+    if (i === activePlatform) return;
+    activePlatform = i;
+    cards.forEach((c, k) => c.classList.toggle("active", k === i));
+    words.forEach((w, k) => w.classList.toggle("active", k === i));
+    const h = words[0].offsetHeight;
+    wordsEl.style.transform = `translateY(${-(i + 0.5) * h}px)`;
+    document.documentElement.style.setProperty("--glow", platforms[i].c1);
+  }
+
+  /* ---------- Statement: wrap each word ---------- */
+  const st = document.getElementById("statementText");
+  function wrapWords(node) {
+    [...node.childNodes].forEach(n => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(part => {
+          if (!part.trim()) { frag.appendChild(document.createTextNode(part)); return; }
+          const s = document.createElement("span");
+          s.className = "w" + (node.classList && node.classList.contains("hl") ? " hl" : "");
+          s.textContent = part;
+          frag.appendChild(s);
+        });
+        node.replaceChild(frag, n);
+      } else if (n.nodeType === 1) wrapWords(n);
+    });
+  }
+  wrapWords(st);
+  const stWords = [...st.querySelectorAll(".w")];
+  const statement = document.getElementById("statement");
+
+  /* ---------- Reveal on scroll ---------- */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const siblings = [...e.target.parentElement.querySelectorAll(".reveal")];
+        e.target.style.transitionDelay = (siblings.indexOf(e.target) * 0.08) + "s";
+        e.target.classList.add("in");
+      }
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+  /* ---------- Main scroll loop ---------- */
+  const floaters = document.querySelectorAll("[data-speed]");
+  const progress = document.getElementById("progress");
+  function onScroll() {
+    const y = window.scrollY, vh = window.innerHeight;
+
+    // parallax in hero
+    floaters.forEach(f => f.style.transform = `translateY(${y * f.dataset.speed * -1}px)`);
+
+    // progress bar
+    progress.style.width = (y / (document.body.scrollHeight - vh) * 100) + "%";
+
+    // statement words light up as it scrolls into view
+    const r = statement.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.85)));
+    const lit = Math.floor(p * stWords.length * 1.1);
+    stWords.forEach((w, k) => w.classList.toggle("lit", k < lit));
+
+    // sticky platform section
+    const top = stickyWrap.offsetTop, range = stickyWrap.offsetHeight - vh;
+    const sp = Math.min(0.999, Math.max(0, (y - top) / range));
+    setPlatform(Math.floor(sp * platforms.length));
+
+    updateCounter();
+  }
+
+  /* ---------- Keyboard navigation (like slides) ---------- */
+  const slides = [...document.querySelectorAll(".slide")];
+  function stops() {
+    const s = [];
+    slides.forEach(sec => {
+      if (sec === stickyWrap) {
+        const range = sec.offsetHeight - window.innerHeight;
+        platforms.forEach((_, i) => s.push(sec.offsetTop + range * (i + 0.5) / platforms.length));
+      } else {
+        s.push(sec.offsetTop);
+        // tall slide: add a second stop so nothing at the bottom is skipped
+        const extra = sec.offsetHeight - window.innerHeight;
+        if (extra > 40) s.push(sec.offsetTop + extra);
+      }
+    });
+    return s;
+  }
+  function currentStop(s) {
+    const y = window.scrollY;
+    let idx = 0;
+    s.forEach((v, i) => { if (y >= v - 10) idx = i; });
+    return idx;
+  }
+  function updateCounter() {
+    const s = stops();
+    const pad = n => String(n).padStart(2, "0");
+    document.getElementById("counter").textContent = `${pad(currentStop(s) + 1)} / ${pad(s.length)}`;
+  }
+  window.addEventListener("keydown", e => {
+    const next = ["ArrowDown", "ArrowRight", "PageDown", " "].includes(e.key);
+    const prev = ["ArrowUp", "ArrowLeft", "PageUp"].includes(e.key);
+    if (!next && !prev) return;
+    e.preventDefault();
+    const s = stops(), y = window.scrollY;
+    const target = next ? s.find(v => v > y + 10) : [...s].reverse().find(v => v < y - 10);
+    if (target !== undefined) window.scrollTo({ top: Math.max(0, target), behavior: "smooth" });
+  });
+
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (!ticking) { requestAnimationFrame(() => { onScroll(); ticking = false; }); ticking = true; }
+  });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+</script>
+</body>
+</html>
